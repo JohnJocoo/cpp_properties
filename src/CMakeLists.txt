@@ -10,9 +10,13 @@ set( LIB_SOURCES "${SRC_DIR}/prop/alias_property.hpp"
                  "${SRC_DIR}/prop/member_property.hpp"
                  "${SRC_DIR}/prop/method_property.hpp"
                  "${SRC_DIR}/prop/properties.hpp"
+                 "${SRC_DIR}/prop/property_tags.hpp"
+                 "${SRC_DIR}/prop/enable_properties.hpp"
+                 "${SRC_DIR}/prop/detail/forward_declarations.hpp"
                  "${SRC_DIR}/prop/detail/index.hpp"
                  "${SRC_DIR}/prop/detail/property_base.hpp"
                  "${SRC_DIR}/prop/detail/static_class_counter.hpp"
+                 "${SRC_DIR}/prop/detail/inner_traits.hpp"
                  )
                 
 add_library( cpp_properties INTERFACE )

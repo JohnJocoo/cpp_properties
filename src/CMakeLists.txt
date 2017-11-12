@@ -21,3 +21,4 @@ target_include_directories( cpp_properties INTERFACE
                             "${SRC_DIR}/prop/detail" 
                             )
                             
+add_custom_target( cpp_properties_header SOURCES ${LIB_SOURCES} )

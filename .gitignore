@@ -12,4 +12,5 @@ CMakeCache.txt
 .DS_Store
 CMakeScripts
 *.xcodeproj*
+Makefile
 

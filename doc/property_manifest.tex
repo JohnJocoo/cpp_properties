@@ -1,0 +1,104 @@
+% !TEX TS?program = pdflatexmk
+
+\documentclass[12pt]{amsart}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry} % see geometry.pdf on how to lay out the page. There's lots.
+\usepackage{csquotes}
+\usepackage[english]{babel}
+\usepackage[
+backend=biber,
+style=authortitle,
+sorting=ynt
+]{biblatex}
+\usepackage{listings}
+
+\geometry{a4paper} % or letter or a5paper or ... etc
+% \geometry{landscape} % rotated page geometry
+
+\addbibresource{property_manifest.bib}
+
+% See the ``Article customise'' template for come common customisations
+
+\title{C++ Properties - a library solution}
+\author{Anton Frolov}
+%\date{} % delete this line to display the current date
+
+%%% BEGIN DOCUMENT
+\begin{document}
+
+\maketitle
+
+\clearpage\tableofcontents
+
+\clearpage\section{Introduction}
+	\textit{Property} is a useful concept that has a native implementation in dozen of programming languages that support \textit{OOP}. Itself \textit{properties} have originated as part of \textit{object-oriented paradigm} to represent the \textit{public} parts of object's state and as well to provide unified interface to directly modify state if allowed. The ability to access \textit{property} as ordinary \textit{data field} is the key feature \textit{properties} are praised for. More practical definition of \textit{property} exist:
+\begin{displayquote}	
+	A property, in some object-oriented programming languages, is a special sort of class member, intermediate in functionality between a field (or data member) and a method. The syntax for reading and writing of properties is like for fields, but property reads and writes are (usually) translated to 'getter' and 'setter' method calls. \cite{wiki_properties}
+\end{displayquote}
+	A code example is appropriate here:
+\begin{lstlisting}[language=C++] % use C++ highlighting for C# 
+
+class Zoo 
+{
+    private int monkeys; // private field
+    
+    public int Monkeys // public property 
+    {  
+        get
+        {
+            return this.monkeys;
+        }
+        set 
+        {
+            if (value > 0) 
+                this.monkeys = value;
+        }
+    } // public int Monkeys
+} // class Zoo 
+
+Zoo zoo = new Zoo();
+int monkeys_tmp = zoo.Monkeys;
+zoo.Monkeys = 17;
+zoo.Monkeys += 1; // clearer than "zoo.setMonkeys(zoo.getMonkeys() + 1)"
+
+\end{lstlisting}
+	Sadly, \textit{property} remains to be an alien concept for C++ and its community, despite following:
+\begin{enumerate}
+\item Large amount of proposals being pushed to C++ committee regarding \textit{properties}. \footnote{At the time of writing search "properties" on https://isocpp.org/forums/iso-c-standard-future-proposals gives about 300 results. Sure not all of papers found are about properties as a language feature, but still there are a lot of interest in standardising properties.}
+\item At least two popular compilers implement \textit{properties} as an extension. \footnote{Visual C++ https://msdn.microsoft.com/en-us/library/yhfk0thd.aspx and clang https://clang.llvm.org/docs/LanguageExtensions.html.}
+\item People keep reinventing them as a library solutions. \footnote{Qt http://doc.qt.io/qt-5/properties.html and C++ CX https://docs.microsoft.com/en-us/cpp/cppcx/properties-c-cx are libraries with properties implemented.}
+\end{enumerate}
+\bigskip	Such narrow-mindedness often leads to either importability \footnote{Often public fields are used, such poor design leads to inability to change class implementation without changing user code.} or inconvenience and code bloat:
+\begin{lstlisting}[language=C++] 
+
+class Zoo 
+{
+    int monkeys; // private field
+    
+public:
+    int getMonkeys() const // public getter 
+    {
+        return monkeys;
+    }  
+
+    void setMonkeys( int value ) // public setter 
+    {
+        if (value > 0)
+            monkeys = value;
+    }  
+} // class Zoo 
+
+Zoo zoo;
+zoo.setMonkeys(zoo.getMonkeys() + 1); // I want "zoo.Monkeys++"
+
+\end{lstlisting}
+	After struggling with get/set functions my whole carrier, I stepped across an inefficient and bad-designed property library. As an attempt to improve code quality of my employer I've created yet another library that implement \textit{properties}. This paper aims to justify library design and convince potential users to give it a try.
+
+\clearpage\section{Problem}
+\subsection{Encapsulation and get/set}
+\subsection{Public field phobia}
+
+\printbibliography
+
+\end{document}
+

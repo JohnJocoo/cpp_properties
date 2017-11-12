@@ -1,0 +1,15 @@
+CMakeFiles
+.vs
+Debug
+Release
+PropertiesTest.dir
+Win32
+*.VC*
+*.vcxproj*
+cmake_install.cmake
+*.sln
+CMakeCache.txt
+.DS_Store
+CMakeScripts
+*.xcodeproj*
+

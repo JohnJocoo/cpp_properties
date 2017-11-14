@@ -4,11 +4,12 @@
 
 #include "index.hpp"
 
-#define PROP_DETAIL_CURRENT_COUNTER( class ) \
+#define PROP_DETAIL_CURRENT_COUNTER_33fe95a2( class ) \
 ::prop::detail::CurrentCounter< class, __COUNTER__ >::value
 
-#define PROP_DETAIL_COUNTER_INC( class ) \
-static void zz_prop_detail_counter( ::prop::detail::Index< CURRENT_COUNTER( class ) > ) {}
+#define PROP_DETAIL_COUNTER_INC_33fe95a2( class ) \
+static void zz_prop_detail_counter_33fe95a2( \
+::prop::detail::Index< PROP_DETAIL_CURRENT_COUNTER_33fe95a2( class ) > ) {}
 
 namespace prop {
 namespace detail {
@@ -20,7 +21,7 @@ class HasStaticCounter
   struct helper;
   template< typename T >
   static std::uint8_t check( helper< void (*)( ::prop::detail::Index< N > ),
-                            &T::zz_prop_detail_counter >* );
+                            &T::zz_prop_detail_counter_33fe95a2 >* );
   template< typename T >
   static std::uint16_t check(...);
   

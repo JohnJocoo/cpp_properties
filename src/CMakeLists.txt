@@ -17,6 +17,12 @@ set( LIB_SOURCES "${SRC_DIR}/prop/alias_property.hpp"
                  "${SRC_DIR}/prop/detail/property_base.hpp"
                  "${SRC_DIR}/prop/detail/static_class_counter.hpp"
                  "${SRC_DIR}/prop/detail/inner_traits.hpp"
+                 "${SRC_DIR}/prop/detail/unwrap_if_property.hpp"
+                 "${SRC_DIR}/prop/detail/member_function_wrappers.hpp"
+                 "${SRC_DIR}/prop/detail/identity.hpp"
+                 "${SRC_DIR}/prop/detail/setter_rvalue_adapter.hpp"
+                 "${SRC_DIR}/prop/detail/is_property.hpp"
+                 "${SRC_DIR}/prop/detail/is_alias_property.hpp"
                  )
                 
 add_library( cpp_properties INTERFACE )

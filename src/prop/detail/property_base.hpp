@@ -2,11 +2,11 @@
 
 namespace prop {
 
-template < typename CuriousProperty >
+template < typename ActualProperty >
 class PropertyBase
 {
 public:
-  using Property = CuriousProperty;
+  using Property = ActualProperty;
   
   [[nodiscard]] const Property& downcast() const noexcept
   {

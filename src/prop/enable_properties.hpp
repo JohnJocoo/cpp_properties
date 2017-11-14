@@ -1,6 +1,6 @@
 #pragma once
 
-#define PROP_ENABLE_PROPERTIES( class ) using zz_prop_owner_class = class;
+#define PROP_ENABLE_PROPERTIES( class ) using zz_prop_owner_class_33fe95a2 = class;
 
 namespace prop {
   

@@ -5,7 +5,7 @@
 namespace prop {
 
 template < typename OwnerType, typename ValType,
-  , std::size_t IndexInOwner, typename AccessorTag >
+  std::size_t IndexInOwner, typename AccessorTag >
 class HoldingProperty
 {
 public:

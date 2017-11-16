@@ -29,7 +29,6 @@ struct IsProperty < ::prop::MemberProperty< OwnerType, ValType,
 template < typename OwnerType, typename ValType,
   typename ReadF, typename WriteFOrTag, std::size_t Index,
   typename TagOrVoid >
-class MethodProperty
 struct IsProperty < ::prop::MethodProperty< OwnerType, ValType,
   ReadF, WriteFOrTag, Index, TagOrVoid > > : std::integral_constant< bool, true >
 {

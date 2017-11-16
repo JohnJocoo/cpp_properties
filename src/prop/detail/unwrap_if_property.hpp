@@ -30,9 +30,9 @@ struct UnwrapIfProperty< ::prop::HoldingProperty< Owner,
   ValType, Index, ::prop::ReadWrite > >
   // read-write HoldingProperty - allow move from
 {
-  using Type = T;
+  using Type = ValType;
   using Property = typename ::prop::HoldingProperty< Owner,
-    ValType, ::prop::ReadWrite >;
+    ValType, Index, ::prop::ReadWrite >;
 
   static const Type& forward( const Property& value ) noexcept
   {
@@ -51,9 +51,9 @@ struct UnwrapIfProperty< ::prop::HoldingProperty< Owner,
   ValType, Index, ::prop::ReadOnly > >
   // read-only HoldingProperty
 {
-  using Type = T;
+  using Type = ValType;
   using Property = typename ::prop::HoldingProperty< Owner,
-    ValType, ::prop::ReadOnly >;
+    ValType, Index, ::prop::ReadOnly >;
   
   static const Type& forward( const Property& value ) noexcept
   {
@@ -68,7 +68,7 @@ struct UnwrapIfProperty< ::prop::MemberProperty< Owner, ValType,
   Member, Index, ::prop::ReadWrite > >
   // read-write MemberProperty - allow move from
 {
-  using Type = T;
+  using Type = ValType;
   using Property = ::prop::MemberProperty< Owner, ValType,
     Member, Index, ::prop::ReadWrite >;
 
@@ -90,7 +90,7 @@ struct UnwrapIfProperty< ::prop::MemberProperty< Owner, ValType,
   Member, Index, ::prop::ReadOnly > >
   // read-only MemberProperty
 {
-  using Type = T;
+  using Type = ValType;
   using Property = ::prop::MemberProperty< Owner, ValType,
     Member, Index, ::prop::ReadOnly >;
 
@@ -108,9 +108,9 @@ struct UnwrapIfProperty< ::prop::MethodProperty< Owner, ValType,
   ReadF, WriteFOrTag, Index, TagOrVoid > >
   // MethodProperty
 {
-  using Property = ::prop::MethodProperty< Owner, ValType,
-    ReadF, WriteFOrTag, Index, TagOrVoid >
-  using Type = Property::ReturnType;
+  using Property = ::prop::MethodProperty<
+    Owner, ValType, ReadF, WriteFOrTag, Index, TagOrVoid >;
+  using Type = decltype( std::declval< Property >()() );
 
   static Type forward( const Property& value )
   {
@@ -120,7 +120,7 @@ struct UnwrapIfProperty< ::prop::MethodProperty< Owner, ValType,
 }; // struct UnwrapIfProperty< MethodProperty >
 
 template < typename Owner, typename PropType,
-  PropType OwnerType::*Prop, std::size_t Index >
+  PropType Owner::*Prop, std::size_t Index >
 struct UnwrapIfProperty< ::prop::AliasProperty< Owner, PropType,
   Prop, Index, ::prop::ReadWrite > >
   // read-write AliasProperty - allow move from
@@ -132,7 +132,7 @@ struct UnwrapIfProperty< ::prop::AliasProperty< Owner, PropType,
     Prop, Index, ::prop::ReadWrite >;
   using UnwrapInner = UnwrapIfProperty< Property >;
   using OptimizedType = decltype( UnwrapInner::forward(
-    std::move( std::declval< Property >() ) ) );
+    std::move( std::declval< Property >()() ) ) );
 
   static Type forward( const AliasProperty& value )
   {
@@ -147,7 +147,7 @@ struct UnwrapIfProperty< ::prop::AliasProperty< Owner, PropType,
 }; // struct UnwrapIfProperty< AliasProperty< ReadWrite > >
 
 template < typename Owner, typename PropType,
-  PropType OwnerType::*Prop, std::size_t Index >
+  PropType Owner::*Prop, std::size_t Index >
 struct UnwrapIfProperty< ::prop::AliasProperty< Owner, PropType,
   Prop, Index, ::prop::ReadOnly > >
   // read-only AliasProperty

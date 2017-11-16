@@ -1,8 +1,6 @@
 cmake_minimum_required( VERSION 3.7 )
 
-project(CPP_PROPERTIES LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 14)
+project( CPP_PROPERTIES LANGUAGES CXX )
 
 set( SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}" )
 set( LIB_SOURCES "${SRC_DIR}/prop/alias_property.hpp"
@@ -23,12 +21,12 @@ set( LIB_SOURCES "${SRC_DIR}/prop/alias_property.hpp"
                  "${SRC_DIR}/prop/detail/setter_rvalue_adapter.hpp"
                  "${SRC_DIR}/prop/detail/is_property.hpp"
                  "${SRC_DIR}/prop/detail/is_alias_property.hpp"
+                 "${SRC_DIR}/prop/detail/value_holder.hpp"
                  )
                 
 add_library( cpp_properties INTERFACE )
 target_include_directories( cpp_properties INTERFACE 
-                            "${SRC_DIR}/prop"
-                            "${SRC_DIR}/prop/detail" 
+                            "${SRC_DIR}/"
                             )
                             
 add_custom_target( cpp_properties_header SOURCES ${LIB_SOURCES} )

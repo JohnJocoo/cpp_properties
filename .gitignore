@@ -13,4 +13,4 @@ CMakeCache.txt
 CMakeScripts
 *.xcodeproj*
 Makefile
-
+Project.build

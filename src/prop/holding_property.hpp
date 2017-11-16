@@ -1,157 +1,176 @@
 #pragma once
 
-#include "forward_declarations.hpp"
+#include "property_tags.hpp"
+#include "detail/forward_declarations.hpp"
 #include "detail/inner_traits.hpp"
+#include "detail/value_holder.hpp"
+#include "detail/unwrap_if_property.hpp"
+#include "detail/static_class_counter.hpp"
+
+#define PROP_HOLDING_PROPERTY( value_type, name, accessor_tag ) \
+::prop::HoldingProperty< zz_prop_owner_class_33fe95a2, value_type, \
+PROP_DETAIL_CURRENT_COUNTER_33fe95a2( zz_prop_owner_class_33fe95a2 ), accessor_tag > name; \
+PROP_DETAIL_COUNTER_INC_33fe95a2( zz_prop_owner_class_33fe95a2 )
 
 namespace prop {
-namespace detail {
 
 template < typename OwnerType, typename ValType,
   std::size_t IndexInOwner >
 // concept OwningReadableProperty< T >
 class HoldingProperty< OwnerType, ValType, IndexInOwner, ::prop::ReadOnly >
 {
-  static_assert( ::prop::detail::IsOwnerGood< OwnerType >::value,
-    ::prop::detail::IsOwnerGood< OwnerType >::ErrorMessage );
-  static_assert( ::prop::detail::IsPropertyValueGood< ValType >::value,
-    ::prop::detail::IsPropertyValueGood< ValType >::ErrorMessage );
-
 public:
   using Owner = OwnerType;
   using ValueType = ValType;
   using Accessor = ::prop::ReadOnly;
-  static constexpr std::size_t Index = IndexInOwner;
 
 public:
-  [[nodiscard, noaddress]] const T& operator()() const noexcept
+  [[nodiscard, prop::noaddress]] const ValueType& operator()() const noexcept
   {
-    return m_value;
+    return m_holder.m_value;
   }
 
-  [[nodiscard, noaddress]] operator const T&() const noexcept
+  [[nodiscard, prop::noaddress]] operator const ValueType&() const noexcept
   {
-    return m_value;
+    return m_holder.m_value;
   }
 
-private: // For access by parent class
+private:
+  static_assert( ::prop::detail::IsPropertyValueGood< ValueType >::value,
+    PROP_DETAIL_IS_PROPERTY_VALUE_GOOD_ERROR_33fe95a2 );
+
+  using Holder = typename ::prop::detail::ValueHolder< ValueType, HoldingProperty >;
+  static constexpr std::size_t Index = IndexInOwner;
+
+private: // Can be accessed by owner class
   template < typename... V >
   HoldingProperty( V&&... uref )
-    : m_value{ std::forward< V >( uref )... }
+    : m_holder{ std::forward< V >( uref )... }
   {
+    static_assert( ::prop::detail::IsOwnerGood< Owner >::value,
+      PROP_DETAIL_IS_OWNER_GOOD_ERROR_33fe95a2 );
+  
     static_assert( !std::is_trivial< ValueType >::value || sizeof...( uref ) > 0,
       "HoldingProperty default constructor is unavailable for trivial types" );
   }
 
-  [[nodiscard]] const T& cref() const noexcept
+  [[nodiscard]] const ValueType& cref() const noexcept
   {
-    return m_value;
+    return m_holder.m_value;
   }
 
-  [[nodiscard]] T& ref() noexcept
+  [[nodiscard]] ValueType& ref() noexcept
   {
-    return m_value;
+    return m_holder.m_value;
   }
 
   template < typename V >
-  NewOwningProperty& operator=( V&& uref )
+  HoldingProperty& operator=( V&& uref )
   {
-    m_value = UnwrapProperty< typename CleanType< V >::type >::forward( std::forward< V >( uref ) );
+    m_holder.m_value = ::prop::detail::UnwrapIfProperty<
+      typename ::prop::detail::CleanType< V > >::forward(
+        std::forward< V >( uref ) );
     return *this;
   }
 
-  NewOwningProperty& operator=( const NewOwningProperty& other )
+  HoldingProperty& operator=( const HoldingProperty& other )
   {
-    m_value = other.cref();
+    m_holder.m_value = other.cref();
     return *this;
   }
 
-  NewOwningProperty& operator=( NewOwningProperty&& other )
+  HoldingProperty& operator=( HoldingProperty&& other )
   {
-    m_value = std::move( other.ref() );
+    m_holder.m_value = std::move( other.ref() );
     return *this;
   }
 
 private:
-  T m_value;
+  Holder m_holder;
 
-  friend class OwnerType;
-  friend struct UnwrapProperty< NewOwningProperty >;
+  friend OwnerType;
+  friend ::prop::detail::UnwrapIfProperty< HoldingProperty >;
 
-};
+}; // class HoldingProperty< ReadOnly >
 
-template < typename C, typename T >
+template < typename OwnerType, typename ValType,
+  std::size_t IndexInOwner >
 // concept OwningReadableProperty< T >
 // concept WritableProperty< T >
-class NewOwningProperty< C, T, ReadWrite >
+class HoldingProperty< OwnerType, ValType, IndexInOwner, ::prop::ReadWrite >
 {
-  typedef PropertyBaseTrait< C > BaseTrait;
+public:
+  using Owner = OwnerType;
+  using ValueType = ValType;
+  using Accessor = ::prop::ReadWrite;
 
 public:
-  typedef ReadWrite Accessor;
-
-public:
-  template < typename U = T >
-  NewOwningProperty( typename std::enable_if< !std::is_trivial< U >::value >::type* = nullptr )
+  [[nodiscard, prop::noaddress]] const ValueType& operator()() const noexcept
   {
-    typedef typename BaseTrait::type stub;
-    (void)( ( stub* )nullptr );
+    return m_holder.m_value;
   }
 
-  template < typename... V >
-  NewOwningProperty( V&&... uref )
-    : m_value{ std::forward< V >( uref )... }
+  [[nodiscard, prop::noaddress]] operator const ValueType&() const noexcept
   {
-    static_assert( sizeof...( uref ) > 0, "NewOwningProperty default constructor is unavailable for trivial types" );
-    typedef typename BaseTrait::type stub;
-    (void)( ( stub* )nullptr );
+    return m_holder.m_value;
   }
-
-  [[nodiscard, noaddress]] const T& operator()() const noexcept
-  {
-    return cref();
-  }
-
-  [[nodiscard, noaddress]] operator const T&() const noexcept
-  {
-    return cref();
-  }
-
+  
   template < typename V >
-  NewOwningProperty& operator=( V&& uref )
+  HoldingProperty& operator=( V&& uref )
   {
-    m_value = UnwrapProperty< typename CleanType< V >::type >::forward( std::forward< V >( uref ) );
+    m_holder.m_value = ::prop::detail::UnwrapIfProperty<
+      typename ::prop::detail::CleanType< V > >::forward(
+        std::forward< V >( uref ) );
     return *this;
   }
 
-  NewOwningProperty& operator=( const NewOwningProperty& other )
+  HoldingProperty& operator=( const HoldingProperty& other )
   {
-    m_value = other.cref();
+    m_holder.m_value = other.cref();
     return *this;
   }
 
-  NewOwningProperty& operator=( NewOwningProperty&& other )
+  HoldingProperty& operator=( HoldingProperty&& other )
   {
-    m_value = std::move( other.ref() );
+    m_holder.m_value = std::move( other.ref() );
     return *this;
-  }
-
-protected: // For access by parent class
-  [[nodiscard]] const T& cref() const noexcept
-  {
-    return m_value;
-  }
-
-  [[nodiscard]] T& ref() noexcept
-  {
-    return m_value;
   }
 
 private:
-  T m_value;
+  static_assert( ::prop::detail::IsPropertyValueGood< ValueType >::value,
+    PROP_DETAIL_IS_PROPERTY_VALUE_GOOD_ERROR_33fe95a2 );
 
-  friend struct UnwrapProperty< NewOwningProperty >;
+  using Holder = typename ::prop::detail::ValueHolder< ValueType, HoldingProperty >;
+  static constexpr std::size_t Index = IndexInOwner;
 
-};
+private: // Can be accessed by owner class
+  template < typename... V >
+  HoldingProperty( V&&... uref )
+    : m_holder{ std::forward< V >( uref )... }
+  {
+    static_assert( ::prop::detail::IsOwnerGood< Owner >::value,
+      PROP_DETAIL_IS_OWNER_GOOD_ERROR_33fe95a2 );
+  
+    static_assert( !std::is_trivial< ValueType >::value || sizeof...( uref ) > 0,
+      "HoldingProperty default constructor is unavailable for trivial types" );
+  }
 
-} // namespace detail
+  [[nodiscard]] const ValueType& cref() const noexcept
+  {
+    return m_holder.m_value;
+  }
+
+  [[nodiscard]] ValueType& ref() noexcept
+  {
+    return m_holder.m_value;
+  }
+
+private:
+  Holder m_holder;
+
+  friend OwnerType;
+  friend ::prop::detail::UnwrapIfProperty< HoldingProperty >;
+
+}; // class HoldingProperty< ReadWrite >
+
 } // namespace prop

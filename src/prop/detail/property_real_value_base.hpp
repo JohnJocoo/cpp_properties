@@ -1,23 +1,29 @@
 #pragma once
 
 #include "property_base.hpp"
+#include "property_real_value_facade.hpp"
 
 namespace prop {
 namespace detail {
 
 template < typename ActualProperty, typename ValueType >
-class PropertyRealValueBase : public PropertyBase< ActualProperty >
+class PropertyRealValueBase : public ::prop::detail::PropertyBase< ActualProperty >
 {
 public:
-
-  [[nodiscard, prop::noaddress]] const ValueType& operator()() const noexcept
+  [[nodiscard, prop::noaddress]] const ValueType& operator()() const & noexcept
   {
-    return m_holder.m_value;
+    return ::prop::detail::PropertyRealValueFacade< ActualProperty >::read(
+      this->downcast() );
   }
 
+  /*
+   * const volatile & is used to fix "ambiguos" call
+   * on clang and visual studio
+   */
   [[nodiscard, prop::noaddress]] operator const ValueType& () const volatile & noexcept
   {
-    return const_cast< const HoldingProperty* >( this )->m_holder.m_value;
+    return ::prop::detail::PropertyRealValueFacade< ActualProperty >::read(
+      const_cast< const PropertyRealValueBase* >( this )->downcast() );
   }
   
   /*
@@ -37,10 +43,11 @@ public:
    */
   [[nodiscard, prop::noaddress]] operator ValueType&& () && noexcept
   {
-    return std::move( m_holder.m_value );
+    return ::prop::detail::PropertyRealValueFacade< ActualProperty >::move(
+      this->downcast() );
   }
   
-}; // class PropertyBase
+}; // class PropertyRealValueBase
 
 } // namespace detail
 } // namespace prop

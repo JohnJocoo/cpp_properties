@@ -1,11 +1,12 @@
 #pragma once
 
 namespace prop {
+namespace detail {
 
 template < typename ActualProperty >
 class PropertyBase
 {
-public:
+protected:
   using Property = ActualProperty;
   
   [[nodiscard]] const Property& downcast() const noexcept
@@ -20,4 +21,5 @@ public:
   
 }; // class PropertyBase
 
+} // namespace detail
 } // namespace prop

@@ -25,14 +25,15 @@ struct UnwrapIfProperty // common case (not a property)
   
 }; // struct UnwrapIfProperty< T > (common case)
 
-template < typename Owner, typename ValType, std::size_t Index >
+template < typename Owner, typename ValType,
+  std::size_t Index, typename AccessorTag >
 struct UnwrapIfProperty< ::prop::HoldingProperty< Owner,
-  ValType, Index, ::prop::ReadWrite > >
+  ValType, Index, AccessorTag > >
   // read-write HoldingProperty - allow move from
 {
   using Type = ValType;
   using Property = typename ::prop::HoldingProperty< Owner,
-    ValType, Index, ::prop::ReadWrite >;
+    ValType, Index, AccessorTag >;
 
   static const Type& forward( const Property& value ) noexcept
   {
@@ -44,23 +45,7 @@ struct UnwrapIfProperty< ::prop::HoldingProperty< Owner,
     return std::move( value.ref() );
   }
 
-}; // struct UnwrapIfProperty< HoldingProperty< ReadWrite > >
-
-template < typename Owner, typename ValType, std::size_t Index >
-struct UnwrapIfProperty< ::prop::HoldingProperty< Owner,
-  ValType, Index, ::prop::ReadOnly > >
-  // read-only HoldingProperty
-{
-  using Type = ValType;
-  using Property = typename ::prop::HoldingProperty< Owner,
-    ValType, Index, ::prop::ReadOnly >;
-  
-  static const Type& forward( const Property& value ) noexcept
-  {
-    return value.cref();
-  }
-
-}; // struct UnwrapIfProperty< HoldingProperty< ReadOnly > >
+}; // struct UnwrapIfProperty< HoldingProperty >
 
 template < typename Owner, typename ValType,
   ValType Owner::*Member, std::size_t Index >

@@ -30,14 +30,34 @@ public:
     return m_holder.m_value;
   }
 
-  [[nodiscard, prop::noaddress]] operator const ValueType&() const noexcept
+  [[nodiscard, prop::noaddress]] operator const ValueType& () const volatile & noexcept
   {
-    return m_holder.m_value;
+    return const_cast< const HoldingProperty* >( this )->m_holder.m_value;
+  }
+  
+  /*
+   * I've decided to give ability to move from ReadOnly
+   * properties, as moving-from usually occures on
+   * objects that won't be used any more.
+   * TODO: move to docs 17.6.5.15 [lib.types.movedfrom]
+   * Objects of types defined in the C++ standard library may be moved from (12.8).
+   * Move operations may be explicitly specified or implicitly generated.
+   * Unless otherwise specified, such moved-from objects shall be placed in a valid but unspecified state.
+   *
+   * ReadOnly property is not equal to const objects
+   * (as it might be changed by owner). So I've decided
+   * to allow move-from ReadOnly properties, with
+   * obvious contract that property shouldn't be used
+   * any more (owner will be destroyed).
+   */
+  [[nodiscard, prop::noaddress]] operator ValueType&& () && noexcept
+  {
+    return std::move( m_holder.m_value );
   }
 
 private:
-  static_assert( ::prop::detail::IsPropertyValueGood< ValueType >::value,
-    PROP_DETAIL_IS_PROPERTY_VALUE_GOOD_ERROR_33fe95a2 );
+  static_assert( ::prop::detail::IsRWPropertyValueGood< ValueType >::value,
+    PROP_DETAIL_IS_RW_PROPERTY_VALUE_GOOD_ERROR_33fe95a2 );
 
   using Holder = typename ::prop::detail::ValueHolder< ValueType, HoldingProperty >;
   static constexpr std::size_t Index = IndexInOwner;
@@ -110,9 +130,14 @@ public:
     return m_holder.m_value;
   }
 
-  [[nodiscard, prop::noaddress]] operator const ValueType&() const noexcept
+  [[nodiscard, prop::noaddress]] operator const ValueType& () const volatile & noexcept
   {
-    return m_holder.m_value;
+    return const_cast< const HoldingProperty* >( this )->m_holder.m_value;
+  }
+  
+  [[nodiscard, prop::noaddress]] operator ValueType&& () && noexcept
+  {
+    return std::move( m_holder.m_value );
   }
   
   template < typename V >
@@ -137,8 +162,8 @@ public:
   }
 
 private:
-  static_assert( ::prop::detail::IsPropertyValueGood< ValueType >::value,
-    PROP_DETAIL_IS_PROPERTY_VALUE_GOOD_ERROR_33fe95a2 );
+  static_assert( ::prop::detail::IsRWPropertyValueGood< ValueType >::value,
+    PROP_DETAIL_IS_RW_PROPERTY_VALUE_GOOD_ERROR_33fe95a2 );
 
   using Holder = typename ::prop::detail::ValueHolder< ValueType, HoldingProperty >;
   static constexpr std::size_t Index = IndexInOwner;

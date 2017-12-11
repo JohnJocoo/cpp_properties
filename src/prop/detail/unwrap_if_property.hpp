@@ -3,7 +3,7 @@
 #include <type_traits>
 
 #include "forward_declarations.hpp"
-#include "../property_tags.hpp"
+#include "property_tags.hpp"
 
 namespace prop {
 namespace detail {

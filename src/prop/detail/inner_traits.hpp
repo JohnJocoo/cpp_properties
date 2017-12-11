@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "../enable_properties.hpp"
+#include "enable_properties.hpp"
 #include "is_property.hpp"
 #include "is_alias_property.hpp"
 

@@ -1,9 +1,3 @@
 #pragma once
 
-namespace prop {
-  
-struct Tag {};
-struct ReadOnly : Tag {};
-struct ReadWrite : Tag {};
-
-} // namespace prop
+#include "detail/property_tags.hpp"

@@ -22,10 +22,10 @@ set( LIB_SOURCES "${SRC_DIR}/prop/alias_property.hpp"
                  "${SRC_DIR}/prop/detail/setter_rvalue_adapter.hpp"
                  "${SRC_DIR}/prop/detail/is_property.hpp"
                  "${SRC_DIR}/prop/detail/is_alias_property.hpp"
-                 "${SRC_DIR}/prop/detail/value_holder.hpp"
                  "${SRC_DIR}/prop/detail/property_real_value_facade.hpp" 
                  "${SRC_DIR}/prop/detail/holding_property_facade.hpp" 
                  "${SRC_DIR}/prop/detail/member_property_facade.hpp" 
+                 "${SRC_DIR}/prop/detail/property_holding_base.hpp"
                  )
                 
 add_library( cpp_properties INTERFACE )

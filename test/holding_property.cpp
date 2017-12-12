@@ -7,16 +7,11 @@
 
 struct StringHolder
 {
-  StringHolder() = default;
-  StringHolder( const StringHolder& ) = default;
-  
   StringHolder& operator=( const std::string& other )
   {
     string = other;
     return *this;
   }
-  
-  StringHolder& operator=( const StringHolder& ) = default;
   
   std::string string;
 
@@ -30,6 +25,18 @@ public:
     , ro_int_value{ 0 }
     , long_value{ 0 }
   {}
+  
+  BasicHoldingProperties& operator=( const BasicHoldingProperties& other )
+  {
+    int_value.ref() = other.int_value.cref();
+    string_value.ref() = other.string_value.cref();
+    ro_int_value.ref() = other.ro_int_value.cref();
+    ro_string_value.ref() = other.ro_string_value.cref();
+    string_value_b.ref() = other.string_value_b.cref();
+    long_value.ref() = other.long_value.cref();
+    string_holder.ref() = other.string_holder.cref();
+    return *this;
+  }
 
   template< typename Property >
   std::size_t getIndex()
@@ -171,6 +178,11 @@ TEST(HoldingProperty, Traits)
   EXPECT_FALSE( prop::detail::IsAliasProperty< decltype( obj.ro_int_value ) >::value );
   EXPECT_FALSE( prop::detail::IsAliasProperty< decltype( obj.string_value ) >::value );
   EXPECT_FALSE( prop::detail::IsAliasProperty< decltype( obj.ro_string_value ) >::value );
+  
+  EXPECT_EQ( sizeof( int ), sizeof( obj.int_value ) );
+  EXPECT_EQ( sizeof( int ), sizeof( obj.ro_int_value ) );
+  EXPECT_EQ( sizeof( std::string ), sizeof( obj.string_value ) );
+  EXPECT_EQ( sizeof( std::string ), sizeof( obj.ro_string_value ) );
 }
 
 TEST(HoldingProperty, GetOperator)
@@ -349,6 +361,30 @@ TEST(HoldingProperty, SetPiped)
   EXPECT_EQ( 75, obj.long_value );
 }
 
+TEST(HoldingProperty, CopyOwner)
+{
+  BasicHoldingProperties obj_orig;
+  obj_orig.int_value = 5;
+  obj_orig.setROIntValue( 6 );
+  obj_orig.string_value = "bob";
+  obj_orig.setROStringValue( "bill" );
+  
+  BasicHoldingProperties obj{ obj_orig };
+  EXPECT_EQ( 5, obj.int_value() );
+  EXPECT_EQ( 6, obj.ro_int_value() );
+  EXPECT_EQ( "bob", obj.string_value() );
+  EXPECT_EQ( "bill", obj.ro_string_value() );
+  
+  BasicHoldingProperties obj2;
+  obj2.int_value = 0;
+  obj2.string_value = "";
+  obj2 = obj_orig;
+  EXPECT_EQ( 5, obj2.int_value() );
+  EXPECT_EQ( 6, obj2.ro_int_value() );
+  EXPECT_EQ( "bob", obj2.string_value() );
+  EXPECT_EQ( "bill", obj2.ro_string_value() );
+}
+
 static int getUID()
 {
   static std::atomic_int _uid_gen{ 0 };
@@ -424,6 +460,30 @@ private:
 class HoldingMovableType : prop::EnableProperties
 {
 public:
+  HoldingMovableType() = default;
+  HoldingMovableType( const HoldingMovableType& ) = default;
+  HoldingMovableType( HoldingMovableType&& ) = default;
+
+  HoldingMovableType& operator=( const HoldingMovableType& other )
+  {
+    value1 = other.value1;
+    value2 = other.value2;
+    value3 = other.value3;
+    ro_value = other.ro_value;
+    ro_value2 = other.ro_value2;
+    return *this;
+  }
+  
+  HoldingMovableType& operator=( HoldingMovableType&& other )
+  {
+    value1 = std::move( other.value1 );
+    value2 = std::move( other.value2 );
+    value3 = std::move( other.value3 );
+    ro_value = std::move( other.ro_value );
+    ro_value2 = std::move( other.ro_value2 );
+    return *this;
+  }
+
   PROP_ENABLE_PROPERTIES( HoldingMovableType )
   PROP_HOLDING_PROPERTY( Movable, value1, prop::ReadWrite )
   PROP_HOLDING_PROPERTY( Movable, value2, prop::ReadWrite )
@@ -511,4 +571,29 @@ TEST(HoldingProperty, MoveFrom)
   move_to6 = std::move( obj.ro_value2 );
   EXPECT_EQ( remembered_value, move_to6.getId() );
   EXPECT_EQ( 0, obj.ro_value2().id );
+}
+
+TEST(HoldingProperty, MoveOwner)
+{
+  HoldingMovableType obj;
+
+  auto remembered_value = obj.value1().getId();
+  HoldingMovableType copy_to{ obj };
+  EXPECT_NE( remembered_value, copy_to.value1().getId() );
+  EXPECT_NE( 0, obj.value1().getId() );
+  
+  HoldingMovableType move_to{ std::move( obj ) };
+  EXPECT_EQ( remembered_value, move_to.value1().getId() );
+  EXPECT_EQ( 0, obj.value1().getId() );
+  
+  HoldingMovableType obj2;
+  
+  remembered_value = obj2.value1().getId();
+  copy_to = obj2;
+  EXPECT_NE( remembered_value, copy_to.value1().getId() );
+  EXPECT_NE( 0, obj2.value1().getId() );
+  
+  move_to = std::move( obj2 );
+  EXPECT_EQ( remembered_value, move_to.value1().getId() );
+  EXPECT_EQ( 0, obj2.value1().getId() );
 }

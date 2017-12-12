@@ -46,8 +46,10 @@ private: // Can be accessed by owner class
   
   HoldingProperty( const HoldingProperty& ) = default;
   HoldingProperty( HoldingProperty&& ) = default;
+  ~HoldingProperty() = default;
   
-  using Base::operator=;
+  HoldingProperty& operator=( const HoldingProperty& ) = default;
+  HoldingProperty& operator=( HoldingProperty&& ) = default;
   
   template < typename V >
   HoldingProperty& operator=( V&& uref )
@@ -94,9 +96,11 @@ private: // Can be accessed by owner class
   
   HoldingProperty( const HoldingProperty& ) = default;
   HoldingProperty( HoldingProperty&& ) = default;
+  ~HoldingProperty() = default;
 
 public:
-  using Base::operator=;
+  HoldingProperty& operator=( const HoldingProperty& ) = default;
+  HoldingProperty& operator=( HoldingProperty&& ) = default;
   
   template < typename V >
   HoldingProperty& operator=( V&& uref )

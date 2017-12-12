@@ -28,6 +28,10 @@ protected:
   
   PropertyHoldingBase( const PropertyHoldingBase& ) = default;
   PropertyHoldingBase( PropertyHoldingBase&& ) = default;
+  ~PropertyHoldingBase() = default;
+  
+  PropertyHoldingBase& operator=( const PropertyHoldingBase& ) = default;
+  PropertyHoldingBase& operator=( PropertyHoldingBase&& ) = default;
   
   [[nodiscard]] const ValueType& cref() const noexcept
   {
@@ -45,18 +49,6 @@ protected:
     m_value = ::prop::detail::UnwrapIfProperty<
       typename ::prop::detail::CleanType< V > >::forward(
         std::forward< V >( uref ) );
-  }
-
-  PropertyHoldingBase& operator=( const PropertyHoldingBase& other )
-  {
-    m_value = other.cref();
-    return *this;
-  }
-
-  PropertyHoldingBase& operator=( PropertyHoldingBase&& other )
-  {
-    m_value = std::move( other.ref() );
-    return *this;
   }
   
 private:

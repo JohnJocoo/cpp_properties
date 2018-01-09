@@ -6,7 +6,6 @@
 #include "property_holding_base.hpp"
 #include "inner_traits.hpp"
 #include "static_class_counter.hpp"
-#include "holding_property_facade.hpp"
 
 #define PROP_HOLDING_PROPERTY( value_type, name, accessor_tag ) \
 ::prop::HoldingProperty< zz_prop_owner_class_33fe95a2, value_type, \
@@ -60,7 +59,7 @@ private: // Can be accessed by owner class
 
   friend OwnerType;
   friend ::prop::detail::UnwrapIfProperty< HoldingProperty >;
-  friend ::prop::detail::PropertyRealValueFacade< HoldingProperty >;
+  friend ::prop::detail::PropertyRealValueVisitor< HoldingProperty >;
 
 }; // class HoldingProperty< ReadOnly >
 
@@ -112,7 +111,7 @@ public:
 private:
   friend OwnerType;
   friend ::prop::detail::UnwrapIfProperty< HoldingProperty >;
-  friend ::prop::detail::PropertyRealValueFacade< HoldingProperty >;
+  friend ::prop::detail::PropertyRealValueVisitor< HoldingProperty >;
 
 }; // class HoldingProperty< ReadWrite >
 

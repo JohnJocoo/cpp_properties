@@ -4,15 +4,15 @@ namespace prop {
 namespace detail {
 
 /*
- * SetterRValueAdapter allows to pass to property
+ * SetterArgumentMutator allows to pass to property
  * setter member function that receives rvalue reference
  * as parameter.
- * SetterRValueAdapter will take care of converting
+ * SetterArgumentMutator will take care of converting
  * passed value to rvalue if needed.
  */
 template < typename SetterType, typename IncomingType,
            bool IsSetterArgumentRValueRef = false >
-struct SetterRValueAdapter
+struct SetterArgumentMutator
 // setter parameter is not rvalue reference, just forward value
 {
   static const IncomingType& adapt( const IncomingType& value )
@@ -25,10 +25,10 @@ struct SetterRValueAdapter
     return std::move( value );
   }
 
-}; // struct SetterRValueAdapter< SetterType, IncomingType, IsSetterArgumentRValueRef = false >
+}; // struct SetterArgumentMutator< SetterType, IncomingType, IsSetterArgumentRValueRef = false >
 
 template < typename SameType >
-struct SetterRValueAdapter< SameType, SameType, true >
+struct SetterArgumentMutator< SameType, SameType, true >
 // setter parameter is a rvalue reference
 // and setter parameter type and value type are equal,
 // create new object if value is const reference and
@@ -44,10 +44,10 @@ struct SetterRValueAdapter< SameType, SameType, true >
     return std::move( value );
   }
 
-}; // struct SetterRValueAdapter< SameType, SameType, IsSetterArgumentRValueRef = true >
+}; // struct SetterArgumentMutator< SameType, SameType, IsSetterArgumentRValueRef = true >
 
 template < typename SetterType, typename IncomingType >
-struct SetterRValueAdapter< SetterType, IncomingType, true >
+struct SetterArgumentMutator< SetterType, IncomingType, true >
 // setter parameter is a rvalue reference
 // and setter parameter type and value type are not equal,
 // always create new object
@@ -62,7 +62,7 @@ struct SetterRValueAdapter< SetterType, IncomingType, true >
     return static_cast< SetterType >( std::move( value ) );
   }
 
-}; // struct SetterRValueAdapter< SetterType, IncomingType, IsSetterArgumentRValueRef = true >
+}; // struct SetterArgumentMutator< SetterType, IncomingType, IsSetterArgumentRValueRef = true >
 
 } // namespace detail
 } // namespace prop

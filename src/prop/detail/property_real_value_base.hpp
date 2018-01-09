@@ -1,7 +1,7 @@
 #pragma once
 
 #include "property_base.hpp"
-#include "property_real_value_facade.hpp"
+#include "property_real_value_visitor.hpp"
 
 namespace prop {
 namespace detail {
@@ -12,7 +12,7 @@ class PropertyRealValueBase : public ::prop::detail::PropertyBase< ActualPropert
 public:
   [[nodiscard, prop::noaddress]] const ValueType& operator()() const & noexcept
   {
-    return ::prop::detail::PropertyRealValueFacade< ActualProperty >::read(
+    return ::prop::detail::PropertyRealValueVisitor< ActualProperty >::read(
       this->downcast() );
   }
 
@@ -22,7 +22,7 @@ public:
    */
   [[nodiscard, prop::noaddress]] operator const ValueType& () const volatile & noexcept
   {
-    return ::prop::detail::PropertyRealValueFacade< ActualProperty >::read(
+    return ::prop::detail::PropertyRealValueVisitor< ActualProperty >::read(
       const_cast< const PropertyRealValueBase* >( this )->downcast() );
   }
   
@@ -43,7 +43,7 @@ public:
    */
   [[nodiscard, prop::noaddress]] operator ValueType&& () && noexcept
   {
-    return ::prop::detail::PropertyRealValueFacade< ActualProperty >::move(
+    return ::prop::detail::PropertyRealValueVisitor< ActualProperty >::move(
       this->downcast() );
   }
   

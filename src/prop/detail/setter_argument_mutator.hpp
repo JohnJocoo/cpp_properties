@@ -15,17 +15,35 @@ template < typename SetterType, typename IncomingType,
 struct SetterArgumentMutator
 // setter parameter is not rvalue reference, just forward value
 {
-  static const IncomingType& adapt( const IncomingType& value )
+  static SetterType adapt( const IncomingType& value )
+  {
+    return static_cast< SetterType >( value );
+  }
+
+  static SetterType adapt( IncomingType&& value )
+  {
+    return static_cast< SetterType >( std::move( value ) );
+  }
+
+}; // struct SetterArgumentMutator< SetterType, IncomingType, IsSetterArgumentRValueRef = false >
+
+template < typename SameType >
+struct SetterArgumentMutator< SameType, SameType, false >
+// setter parameter is not rvalue reference,
+// and setter parameter type and value type are equal,
+// just forward value
+{
+  static const SameType& adapt( const SameType& value )
   {
     return value;
   }
 
-  static IncomingType&& adapt( IncomingType&& value )
+  static SameType&& adapt( SameType&& value )
   {
     return std::move( value );
   }
 
-}; // struct SetterArgumentMutator< SetterType, IncomingType, IsSetterArgumentRValueRef = false >
+}; // struct SetterArgumentMutator< SameType, SameType, IsSetterArgumentRValueRef = false >
 
 template < typename SameType >
 struct SetterArgumentMutator< SameType, SameType, true >

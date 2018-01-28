@@ -5,17 +5,7 @@
 #include <string>
 #include <atomic>
 
-struct StringHolder
-{
-  StringHolder& operator=( const std::string& other )
-  {
-    string = other;
-    return *this;
-  }
-  
-  std::string string;
-
-};
+#include "common.hpp"
 
 class BasicHoldingProperties : prop::EnableProperties
 {
@@ -286,7 +276,7 @@ TEST(HoldingProperty, SetFromValue)
   EXPECT_EQ( "", obj.ro_string_value() );
   
   obj.int_value = 86;
-  obj.string_value = "bob";
+  obj.string_value = std::string{ "bob" };
   obj.setROIntValueAssignment( 53 );
   obj.setROStringValueAssignment( "bill" );
   
@@ -296,8 +286,10 @@ TEST(HoldingProperty, SetFromValue)
   EXPECT_EQ( "bill", obj.ro_string_value() );
   
   obj.int_value = (int8_t)24;
+  obj.string_value = "john";
   
   EXPECT_EQ( 24, obj.int_value() );
+  EXPECT_EQ( "john", obj.string_value() );
   
   obj.string_holder = "bob";
   EXPECT_EQ( "bob", obj.string_holder().string );
@@ -311,24 +303,49 @@ TEST(HoldingProperty, SetFromProperty)
   EXPECT_EQ( "", obj.ro_string_value() );
   EXPECT_EQ( "", obj.string_value_b() );
 
-  
   obj.setStringValue( "bill" );
   obj.setROStringValue( "bob" );
   obj.string_value_b = obj.string_value;
-  
+  obj.string_holder = obj.string_value;
   EXPECT_EQ( "bill", obj.string_value_b() );
   EXPECT_EQ( "bill", obj.string_value() );
+  EXPECT_EQ( "bill", obj.string_holder().string );
   
   obj.string_value_b = obj.ro_string_value;
-  
+  obj.string_holder = obj.ro_string_value;
   EXPECT_EQ( "bob", obj.string_value_b() );
   EXPECT_EQ( "bob", obj.ro_string_value() );
+  EXPECT_EQ( "bob", obj.string_holder().string );
   
   obj.setIntValue( 75 );
   obj.long_value = obj.int_value;
+  EXPECT_EQ( 75, obj.int_value() );
+  EXPECT_EQ( 75, obj.long_value() );
   
-  EXPECT_EQ( 75, obj.int_value );
-  EXPECT_EQ( 75, obj.long_value );
+  obj.setROIntValue( 34 );
+  obj.long_value = obj.ro_int_value;
+  EXPECT_EQ( 34, obj.ro_int_value() );
+  EXPECT_EQ( 34, obj.long_value() );
+  
+  BasicHoldingProperties obj2;
+  obj2.setStringValue( "john" );
+  obj2.setROStringValue( "kate" );
+  obj2.setIntValue( 35 );
+  obj2.setROIntValue( 84 );
+  
+  obj.string_value_b = obj2.string_value;
+  obj.string_holder = obj2.string_value;
+  obj.long_value = obj2.int_value;
+  EXPECT_EQ( "john", obj.string_value_b() );
+  EXPECT_EQ( "john", obj.string_holder().string );
+  EXPECT_EQ( 35, obj.long_value() );
+  
+  obj.string_value_b = obj2.ro_string_value;
+  obj.string_holder = obj2.ro_string_value;
+  obj.long_value = obj2.ro_int_value;
+  EXPECT_EQ( "kate", obj.string_value_b() );
+  EXPECT_EQ( "kate", obj.string_holder().string );
+  EXPECT_EQ( 84, obj.long_value() );
 }
 
 TEST(HoldingProperty, SetPiped)
@@ -359,6 +376,26 @@ TEST(HoldingProperty, SetPiped)
   EXPECT_EQ( 75, obj.ro_int_value );
   EXPECT_EQ( 75, obj.int_value );
   EXPECT_EQ( 75, obj.long_value );
+  
+  BasicHoldingProperties obj2;
+  BasicHoldingProperties obj3;
+  
+  obj3.string_value = obj2.string_value = "john";
+  
+  EXPECT_EQ( "john", obj2.string_value() );
+  EXPECT_EQ( "john", obj3.string_value() );
+  
+  obj.setStringValue( "kate" );
+  obj3.string_value = obj2.string_value = obj.string_value;
+  
+  EXPECT_EQ( "kate", obj2.string_value() );
+  EXPECT_EQ( "kate", obj3.string_value() );
+  
+  obj.setROStringValue( "jane" );
+  obj3.string_value = obj2.string_value = obj.ro_string_value;
+  
+  EXPECT_EQ( "jane", obj2.string_value() );
+  EXPECT_EQ( "jane", obj3.string_value() );
 }
 
 TEST(HoldingProperty, CopyOwner)

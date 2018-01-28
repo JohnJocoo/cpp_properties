@@ -8,7 +8,7 @@
 ::prop::detail::CurrentCounter< class, __COUNTER__ >::value
 
 #define PROP_DETAIL_COUNTER_INC_33fe95a2( class ) \
-static void zz_prop_detail_counter_33fe95a2( \
+static constexpr void zz_prop_detail_counter_33fe95a2( \
 ::prop::detail::Index< PROP_DETAIL_CURRENT_COUNTER_33fe95a2( class ) > ) {}
 
 namespace prop {

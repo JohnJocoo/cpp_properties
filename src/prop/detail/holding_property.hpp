@@ -6,6 +6,7 @@
 #include "property_holding_base.hpp"
 #include "inner_traits.hpp"
 #include "static_class_counter.hpp"
+#include "unwrap_if_property.hpp"
 
 #define PROP_HOLDING_PROPERTY( value_type, name, accessor_tag ) \
 ::prop::HoldingProperty< zz_prop_owner_class_33fe95a2, value_type, \
@@ -28,8 +29,8 @@ public:
   using Accessor = ::prop::ReadOnly;
 
 private:
-  static_assert( ::prop::detail::IsRWPropertyValueGood< ValueType >::value,
-    PROP_DETAIL_IS_RW_PROPERTY_VALUE_GOOD_ERROR_33fe95a2 );
+  static_assert( ::prop::detail::IsPropertyValueGood< ValueType >::value,
+    PROP_DETAIL_IS_PROPERTY_VALUE_GOOD_ERROR_33fe95a2 );
 
   static constexpr std::size_t Index = IndexInOwner;
   using Base = ::prop::detail::PropertyHoldingBase< ValueType >;
@@ -78,8 +79,8 @@ public:
   using Accessor = ::prop::ReadWrite;
 
 private:
-  static_assert( ::prop::detail::IsRWPropertyValueGood< ValueType >::value,
-    PROP_DETAIL_IS_RW_PROPERTY_VALUE_GOOD_ERROR_33fe95a2 );
+  static_assert( ::prop::detail::IsPropertyValueGood< ValueType >::value,
+    PROP_DETAIL_IS_PROPERTY_VALUE_GOOD_ERROR_33fe95a2 );
 
   static constexpr std::size_t Index = IndexInOwner;
   using Base = ::prop::detail::PropertyHoldingBase< ValueType >;

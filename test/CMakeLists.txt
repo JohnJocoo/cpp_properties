@@ -7,7 +7,9 @@ include( gtest.cmake )
 enable_testing()
 
 set( SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}" )
-set( TEST_SOURCES "${SRC_DIR}/holding_property.cpp"
+set( TEST_SOURCES "${SRC_DIR}/common.hpp"
+                  "${SRC_DIR}/holding_property.cpp"
+                  "${SRC_DIR}/method_property.cpp"
                  )
                 
 add_executable( cpp_properties_test "${TEST_SOURCES}" )

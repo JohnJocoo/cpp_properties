@@ -10,16 +10,16 @@
 #include "unwrap_if_property.hpp"
 #include "setter_argument_mutator.hpp"
 
-#define PROP_DETAIL_METHOD_PROPERTY_GET_33fe95a2( value_type, name, getter ) \
+#define PROP_DETAIL_METHOD_PROPERTY_GET_33fe95a2( value_type, name, getter, tag ) \
 ::prop::MethodProperty< zz_prop_owner_class_33fe95a2, value_type, \
 ::prop::detail::GetterWrapper< zz_prop_owner_class_33fe95a2, \
 decltype( ::prop::detail::getReturnType( &zz_prop_owner_class_33fe95a2::getter ) )::Type, \
-&zz_prop_owner_class_33fe95a2::getter >, ::prop::ReadOnly, \
+&zz_prop_owner_class_33fe95a2::getter >, tag, \
 PROP_DETAIL_CURRENT_COUNTER_33fe95a2( zz_prop_owner_class_33fe95a2 ) > name; \
 PROP_DETAIL_COUNTER_INC_33fe95a2( zz_prop_owner_class_33fe95a2 ) \
 PROP_DETAIL_DECLARE_INFO_33fe95a2( zz_prop_owner_class_33fe95a2, name )
 
-#define PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2( value_type, name, getter, setter ) \
+#define PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2( value_type, name, getter, setter, tag ) \
 ::prop::MethodProperty< zz_prop_owner_class_33fe95a2, value_type, \
 ::prop::detail::GetterWrapper< zz_prop_owner_class_33fe95a2, \
 decltype( ::prop::detail::getReturnType( &zz_prop_owner_class_33fe95a2::getter ) )::Type, \
@@ -27,10 +27,23 @@ decltype( ::prop::detail::getReturnType( &zz_prop_owner_class_33fe95a2::getter )
 ::prop::detail::SetterWrapper< zz_prop_owner_class_33fe95a2, \
 decltype( ::prop::detail::getArgumentType( &zz_prop_owner_class_33fe95a2::setter ) )::Type, \
 &zz_prop_owner_class_33fe95a2::setter >, \
-PROP_DETAIL_CURRENT_COUNTER_33fe95a2( zz_prop_owner_class_33fe95a2 ), \
-::prop::ReadWrite > name; \
+PROP_DETAIL_CURRENT_COUNTER_33fe95a2( zz_prop_owner_class_33fe95a2 ), tag > name; \
 PROP_DETAIL_COUNTER_INC_33fe95a2( zz_prop_owner_class_33fe95a2 ) \
 PROP_DETAIL_DECLARE_INFO_33fe95a2( zz_prop_owner_class_33fe95a2, name )
+
+#define PROP_DETAIL_EXPAND_33fe95a2( x ) x
+
+#define PROP_DETAIL_METHOD_PROPERTY_ERROR_33fe95a2(...) \
+  static_assert(false, "Wrong number of arguments for PROP_METHOD_PROPERTY()")
+
+#define PROP_DETAIL_GET_MACRO_33fe95a2(_1,_2,_3,_4,_5,NAME,...) NAME
+
+#define PROP_METHOD_PROPERTY(...) PROP_DETAIL_EXPAND_33fe95a2( \
+PROP_DETAIL_GET_MACRO_33fe95a2(__VA_ARGS__, \
+PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2, PROP_DETAIL_METHOD_PROPERTY_GET_33fe95a2, \
+PROP_DETAIL_METHOD_PROPERTY_ERROR_33fe95a2, PROP_DETAIL_METHOD_PROPERTY_ERROR_33fe95a2, \
+PROP_DETAIL_METHOD_PROPERTY_ERROR_33fe95a2, PROP_DETAIL_METHOD_PROPERTY_ERROR_33fe95a2, \
+PROP_DETAIL_METHOD_PROPERTY_ERROR_33fe95a2)(__VA_ARGS__))
 
 namespace prop {
 

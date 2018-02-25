@@ -179,20 +179,20 @@ private:
   
 public:
   PROP_ENABLE_PROPERTIES( BasicMethodProperties )
-  PROP_DETAIL_METHOD_PROPERTY_GET_33fe95a2(int, ro_int_value, getIntValue)
-  PROP_DETAIL_METHOD_PROPERTY_GET_33fe95a2(int, ro_int_value2, getIntValueCRef)
-  PROP_DETAIL_METHOD_PROPERTY_GET_33fe95a2(std::string, ro_string_value, getStringValue)
-  PROP_DETAIL_METHOD_PROPERTY_GET_33fe95a2(std::string, ro_string_value2, getStringValueCRef)
-  PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2(int, int_value, getIntValue2, setIntValue2)
-  PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2(int, int_value2, getIntValue2CRef, setIntValue2CRef)
-  PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2(int, int_value3, getIntValue2_, setIntValue2RVRef)
-  PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2(std::string, string_value, getStringValue2, setStringValue2)
-  PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2(std::string, string_value2, getStringValue2CRef, setStringValue2CRef)
-  PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2(std::string, string_value3, getStringValue2_, setStringValue2RVRef)
-  PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2(StringHolder, string_holder, getStringHolder, setStringHolder)
-  PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2(StringHolder, string_holder2, getStringHolderCRef, setStringHolderCRef)
-  PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2(StringHolder, string_holder3, getStringHolder_, setStringHolderRVRef)
-  PROP_DETAIL_METHOD_PROPERTY_SET_33fe95a2(long long, long_value, getLongValue, setLongValue);
+  PROP_METHOD_PROPERTY( int, ro_int_value, getIntValue, prop::ReadOnly )
+  PROP_METHOD_PROPERTY( int, ro_int_value2, getIntValueCRef, prop::ReadOnly )
+  PROP_METHOD_PROPERTY( std::string, ro_string_value, getStringValue, prop::ReadOnly )
+  PROP_METHOD_PROPERTY( std::string, ro_string_value2, getStringValueCRef, prop::ReadOnly )
+  PROP_METHOD_PROPERTY( int, int_value, getIntValue2, setIntValue2, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( int, int_value2, getIntValue2CRef, setIntValue2CRef, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( int, int_value3, getIntValue2_, setIntValue2RVRef, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( std::string, string_value, getStringValue2, setStringValue2, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( std::string, string_value2, getStringValue2CRef, setStringValue2CRef, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( std::string, string_value3, getStringValue2_, setStringValue2RVRef, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( StringHolder, string_holder, getStringHolder, setStringHolder, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( StringHolder, string_holder2, getStringHolderCRef, setStringHolderCRef, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( StringHolder, string_holder3, getStringHolder_, setStringHolderRVRef, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( long long, long_value, getLongValue, setLongValue, prop::ReadWrite )
 
 }; // class BasicMethodProperties
 
@@ -713,4 +713,246 @@ TEST(MethodProperty, CopyOwner)
   EXPECT_EQ( 6, obj2.ro_int_value() );
   EXPECT_EQ( "bob", obj2.string_value() );
   EXPECT_EQ( "bill", obj2.ro_string_value() );
+}
+
+class MethodMovableType : prop::EnableProperties
+{
+public:
+  MethodMovableType() = default;
+  MethodMovableType( const MethodMovableType& ) = default;
+  MethodMovableType( MethodMovableType&& ) = default;
+
+  MethodMovableType& operator=( const MethodMovableType& other )
+  {
+    m_value1 = other.m_value1;
+    m_value2 = other.m_value2;
+    m_value3 = other.m_value3;
+    m_value4 = other.m_value4;
+    m_ro_value = other.m_ro_value;
+    m_ro_value2 = other.m_ro_value2;
+    return *this;
+  }
+  
+  MethodMovableType& operator=( MethodMovableType&& other )
+  {
+    m_value1 = std::move( other.m_value1 );
+    m_value2 = std::move( other.m_value2 );
+    m_value3 = std::move( other.m_value3 );
+    m_value4 = std::move( other.m_value4 );
+    m_ro_value = std::move( other.m_ro_value );
+    m_ro_value2 = std::move( other.m_ro_value2 );
+    return *this;
+  }
+  
+private:
+  Movable getValue1() const
+  {
+    return m_value1;
+  }
+  
+  Movable getValue2() const
+  {
+    return m_value2;
+  }
+  
+  Movable getValue4() const
+  {
+    return m_value4;
+  }
+  
+  Movable getRoValue() const
+  {
+    return m_ro_value;
+  }
+  
+  IdHolder getValue3() const
+  {
+    return m_value3;
+  }
+  
+  IdHolder getRoValue2() const
+  {
+    return m_ro_value2;
+  }
+  
+  void setValue1( const Movable& value )
+  {
+    m_value1 = value;
+  }
+  
+  void setValue2( Movable value )
+  {
+    m_value2 = std::move( value );
+  }
+  
+  void setValue4( Movable&& value )
+  {
+    m_value4 = std::move( value );
+  }
+  
+  void setValue3( const IdHolder& value )
+  {
+    m_value3 = value;
+  }
+
+public:
+  Movable m_value1;
+  Movable m_value2;
+  Movable m_value4;
+  Movable m_ro_value;
+  
+  IdHolder m_value3;
+  IdHolder m_ro_value2;
+
+public:
+  PROP_ENABLE_PROPERTIES( MethodMovableType )
+  PROP_METHOD_PROPERTY( Movable, value1, getValue1, setValue1, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( Movable, value2, getValue2, setValue2, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( Movable, value4, getValue4, setValue4, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( Movable, ro_value, getRoValue, prop::ReadOnly )
+  
+  PROP_METHOD_PROPERTY( IdHolder, value3, getValue3, setValue3, prop::ReadWrite )
+  PROP_METHOD_PROPERTY( IdHolder, ro_value2, getRoValue2, prop::ReadOnly )
+
+};
+
+/*
+ * You can't move from method property
+ * as value returned from getter must be either
+ * temporary value or const &.
+ * Ability to move to method property fully depends on
+ * setter implementation and its argument type.
+ */
+
+TEST(MethodProperty, MoveTo)
+{
+  MethodMovableType obj;
+  Movable move_from;
+  auto remembered_value = move_from.getId();
+  // const T& setter - value won't be moved
+  obj.value1 = std::move( move_from );
+  EXPECT_NE( remembered_value, obj.m_value1.getId() );
+  EXPECT_NE( 0, obj.m_value1.getId() );
+  EXPECT_EQ( remembered_value, move_from.getId() );
+  
+  Movable move_from2;
+  remembered_value = move_from2.getId();
+  obj.value2 = std::move( move_from2 );
+  EXPECT_EQ( remembered_value, obj.m_value2.getId() );
+  EXPECT_EQ( 0, move_from2.getId() );
+  
+  Movable move_from3;
+  remembered_value = move_from3.getId();
+  obj.value4 = std::move( move_from3 );
+  EXPECT_EQ( remembered_value, obj.m_value4.getId() );
+  EXPECT_EQ( 0, move_from3.getId() );
+  
+  IdHolder move_from_other;
+  remembered_value = move_from_other.id;
+  // const T& setter - value won't be moved
+  obj.value1 = std::move( move_from_other );
+  EXPECT_NE( remembered_value, obj.m_value1.getId() );
+  EXPECT_NE( 0, obj.m_value1.getId() );
+  // moved from during conversion, not in setter
+  EXPECT_EQ( 0, move_from_other.id );
+  
+  IdHolder move_from_other2;
+  remembered_value = move_from_other2.id;
+  obj.value2 = std::move( move_from_other2 );
+  EXPECT_EQ( remembered_value, obj.m_value2.getId() );
+  EXPECT_EQ( 0, move_from_other2.id );
+  
+  IdHolder move_from_other3;
+  remembered_value = move_from_other3.id;
+  obj.value4 = std::move( move_from_other3 );
+  EXPECT_EQ( remembered_value, obj.m_value4.getId() );
+  EXPECT_EQ( 0, move_from_other3.id );
+}
+
+TEST(MethodProperty, MoveProp)
+{
+  MethodMovableType obj;
+  auto remembered_value = obj.m_value1.getId();
+  obj.value2 = std::move( obj.value1 );
+  EXPECT_NE( remembered_value, obj.m_value2.getId() );
+  EXPECT_EQ( remembered_value, obj.m_value1.getId() );
+  
+  remembered_value = obj.m_value3.id;
+  obj.value2 = std::move( obj.value3 );
+  EXPECT_EQ( remembered_value, obj.m_value2.getId() );
+  EXPECT_EQ( remembered_value, obj.m_value3.id );
+  
+  remembered_value = obj.m_ro_value.getId();
+  obj.value2 = std::move( obj.ro_value );
+  EXPECT_NE( remembered_value, obj.m_value2.getId() );
+  EXPECT_EQ( remembered_value, obj.m_ro_value.getId() );
+  
+  remembered_value = obj.m_ro_value2.id;
+  obj.value2 = std::move( obj.ro_value2 );
+  EXPECT_EQ( remembered_value, obj.m_value2.getId() );
+  EXPECT_EQ( remembered_value, obj.m_ro_value2.id );
+}
+
+TEST(MethodProperty, MoveFrom)
+{
+  MethodMovableType obj;
+
+  // can't move from returned value
+  auto remembered_value = obj.m_value1.getId();
+  Movable move_to = std::move( obj.value1() );
+  EXPECT_NE( remembered_value, move_to.getId() );
+  EXPECT_NE( 0, obj.m_value1.getId() );
+  
+  // can't move from returned value
+  remembered_value = obj.m_ro_value.getId();
+  Movable move_to4 = std::move( obj.ro_value() );
+  EXPECT_NE( remembered_value, move_to4.getId() );
+  EXPECT_NE( 0, obj.m_ro_value.getId() );
+  
+  remembered_value = obj.m_value1.getId();
+  Movable move_to2 = std::move( obj.value1 );
+  EXPECT_NE( remembered_value, move_to2.getId() );
+  EXPECT_NE( 0, obj.m_value1.getId() );
+  
+  remembered_value = obj.m_ro_value.getId();
+  Movable move_to3 = std::move( obj.ro_value );
+  EXPECT_NE( remembered_value, move_to3.getId() );
+  EXPECT_NE( 0, obj.m_ro_value.getId() );
+  
+  remembered_value = obj.m_value3.id;
+  Movable move_to5;
+  move_to5 = std::move( obj.value3 );
+  EXPECT_EQ( remembered_value, move_to5.getId() );
+  EXPECT_NE( 0, obj.m_value3.id );
+  
+  remembered_value = obj.m_ro_value2.id;
+  Movable move_to6;
+  move_to6 = std::move( obj.ro_value2 );
+  EXPECT_EQ( remembered_value, move_to6.getId() );
+  EXPECT_NE( 0, obj.m_ro_value2.id );
+}
+
+TEST(MethodProperty, MoveOwner)
+{
+  MethodMovableType obj;
+
+  auto remembered_value = obj.m_value1.getId();
+  MethodMovableType copy_to{ obj };
+  EXPECT_NE( remembered_value, copy_to.m_value1.getId() );
+  EXPECT_NE( 0, obj.m_value1.getId() );
+  
+  MethodMovableType move_to{ std::move( obj ) };
+  EXPECT_EQ( remembered_value, move_to.m_value1.getId() );
+  EXPECT_EQ( 0, obj.m_value1.getId() );
+  
+  MethodMovableType obj2;
+  
+  remembered_value = obj2.m_value1.getId();
+  copy_to = obj2;
+  EXPECT_NE( remembered_value, copy_to.m_value1.getId() );
+  EXPECT_NE( 0, obj2.m_value1.getId() );
+  
+  move_to = std::move( obj2 );
+  EXPECT_EQ( remembered_value, move_to.m_value1.getId() );
+  EXPECT_EQ( 0, obj2.m_value1.getId() );
 }

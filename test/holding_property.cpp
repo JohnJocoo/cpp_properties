@@ -422,78 +422,6 @@ TEST(HoldingProperty, CopyOwner)
   EXPECT_EQ( "bill", obj2.ro_string_value() );
 }
 
-static int getUID()
-{
-  static std::atomic_int _uid_gen{ 0 };
-  return ++_uid_gen;
-}
-
-class IdHolder
-{
-public:
-    IdHolder()
-    : id{ getUID() }
-  {}
-  
-  int id;
-};
-
-class Movable
-{
-public:
-  Movable()
-    : m_id{ getUID() }
-  {}
-  
-  Movable( const Movable& other )
-    : m_id{ getUID() }
-  {}
-  
-  Movable( Movable&& other )
-    : m_id{ other.m_id }
-  {
-    other.m_id = 0;
-  }
-  
-  ~Movable() = default;
-  
-  Movable& operator=( const Movable& other )
-  {
-    m_id = getUID();
-    return *this;
-  }
-  
-  Movable& operator=( Movable&& other )
-  {
-    m_id = other.m_id;
-    other.m_id = 0;
-    return *this;
-  }
-  
-  Movable& operator=( const IdHolder& other )
-  {
-    m_id = getUID();
-    return *this;
-  }
-  
-  Movable& operator=( IdHolder&& other )
-  {
-    m_id = other.id;
-    other.id = 0;
-    return *this;
-  }
-  
-  int getId() const
-  {
-    return m_id;
-  }
-  
-private:
-  
-  int m_id;
-  
-};
-
 class HoldingMovableType : prop::EnableProperties
 {
 public:
@@ -530,6 +458,15 @@ public:
   PROP_HOLDING_PROPERTY( IdHolder, ro_value2, prop::ReadOnly )
 
 };
+
+/*
+ * Generally moving to and from
+ * is very well supported by holding
+ * property. Even moving from ReadOnly
+ * property is possible.
+ * The only limitation is that you can not
+ * move from returned value of operator().
+ */
 
 TEST(HoldingProperty, MoveTo)
 {
@@ -569,6 +506,27 @@ TEST(HoldingProperty, MoveProp)
   obj.value2 = std::move( obj.ro_value2 );
   EXPECT_EQ( remembered_value, obj.value2().getId() );
   EXPECT_EQ( 0, obj.ro_value2().id );
+  
+  HoldingMovableType obj2;
+  remembered_value = obj2.value1().getId();
+  obj.value2 = std::move( obj2.value1 );
+  EXPECT_EQ( remembered_value, obj.value2().getId() );
+  EXPECT_EQ( 0, obj2.value1().getId() );
+  
+  remembered_value = obj2.value3().id;
+  obj.value2 = std::move( obj2.value3 );
+  EXPECT_EQ( remembered_value, obj.value2().getId() );
+  EXPECT_EQ( 0, obj2.value3().id );
+  
+  remembered_value = obj2.ro_value().getId();
+  obj.value2 = std::move( obj2.ro_value );
+  EXPECT_EQ( remembered_value, obj.value2().getId() );
+  EXPECT_EQ( 0, obj2.ro_value().getId() );
+  
+  remembered_value = obj2.ro_value2().id;
+  obj.value2 = std::move( obj2.ro_value2 );
+  EXPECT_EQ( remembered_value, obj.value2().getId() );
+  EXPECT_EQ( 0, obj2.ro_value2().id );
 }
 
 TEST(HoldingProperty, MoveFrom)

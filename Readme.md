@@ -15,3 +15,56 @@ The project is WIP. But even now following features are implemented:
     * MemberProperty - one that references class member
     * AliasProperty - property that references other property and acts as name alias
 
+# Example
+There is an example in /example folder, here its short version.
+
+Suppose you have a network resource class (like URL) that inialize host name in constructor, allow to get/set port, path and user info. Host name and full URL (as string) are read-only. Moreover you want to store user as separate name and secret (string), but provide public interface that get/set user as structure User. Here how this could be done using properties library:
+
+    class Resource : prop::EnableProperties
+    {
+    public:
+      Resource() = default;
+      Resource( const std::string& host )
+        : host{ host }
+        , port{ 0 }
+      {}
+
+    private:
+      User getUser() const
+      {
+        return{ m_userName, m_userSecret };
+      }
+
+      void setUser( const User& user )
+      {
+        m_userName = user.name;
+        m_userSecret = user.secret;
+      }
+
+      std::string getURL() const
+      {
+        return toURL( host, port, path, m_userName, m_userSecret );
+      }
+
+    private:
+      std::string m_userName;
+      std::string m_userSecret;
+
+    public:
+      PROP_ENABLE_PROPERTIES( Resource )
+      PROP_HOLDING_PROPERTY( std::string, host, prop::ReadOnly )
+      PROP_HOLDING_PROPERTY( int, port, prop::ReadWrite )
+      PROP_HOLDING_PROPERTY( std::string, path, prop::ReadWrite )
+      PROP_METHOD_PROPERTY( User, user, getUser, setUser, prop::ReadWrite )
+      PROP_METHOD_PROPERTY( std::string, URL, getURL, prop::ReadOnly )
+
+    }; // class Resource
+    
+And usage in code might look like this:
+
+    PropertyResource prp_res{ "google.com" };
+    prp_res.port = 8080;
+    prp_res.path = "/api/v1.0/status";
+    prp_res.user = User{ "john", "pwd" };
+    printLine( prp_res.URL );  // void printLine(const std::string&);
+    std::cout << prp_res.host() << std::endl;

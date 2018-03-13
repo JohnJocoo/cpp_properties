@@ -577,6 +577,8 @@ TEST(HoldingProperty, MoveFrom)
 
 TEST( HoldingProperty, MoveFromCastable )
 {
+  HoldingMovableType obj;
+
   auto remembered_value = obj.value3().id;
   Movable move_to5;
   move_to5 = std::move( obj.value3 );

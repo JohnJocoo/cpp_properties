@@ -18,7 +18,7 @@ The project is WIP. But even now following features are implemented:
 # Example
 There is an example in /example folder, here its short version.
 
-Suppose you have a network resource class (like URL) that inialize host name in constructor, allow to get/set port, path and user info. Host name and full URL (as string) are read-only. Moreover you want to store user as separate name and secret (string), but provide public interface that get/set user as structure User. Here how this could be done using properties library:
+Suppose you have a network resource class (like URL) that initialize host name in constructor, allow to get/set port, path and user info. Host name and full URL (as string) are read-only. Moreover you want to store user as separate name and secret (string), but provide public interface that get/set user as structure User. Here how this could be done using properties library:
 
     class Resource : prop::EnableProperties
     {

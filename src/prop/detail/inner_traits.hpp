@@ -13,6 +13,12 @@
 #define PROP_DETAIL_IS_PROPERTY_VALUE_GOOD_ERROR_33fe95a2 \
 "Property value must be copy-constructable & copy-assignable clean type"
 
+#if defined _MSC_VER
+# define PROP_DETAIL_EXTENDED_CONSTEXPR_33fe95a2 
+#else
+# define PROP_DETAIL_EXTENDED_CONSTEXPR_33fe95a2 constexpr
+#endif
+
 namespace prop {
 namespace detail {
 

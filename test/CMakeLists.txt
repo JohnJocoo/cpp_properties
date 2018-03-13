@@ -13,4 +13,7 @@ set( TEST_SOURCES "${SRC_DIR}/common.hpp"
                  )
                 
 add_executable( cpp_properties_test "${TEST_SOURCES}" )
+if (MSVC)
+    target_compile_options( cpp_properties_test PRIVATE "/MTd" )
+endif (MSVC)
 target_link_libraries( cpp_properties_test cpp_properties libgtest libgtest_main )

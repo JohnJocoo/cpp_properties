@@ -4,12 +4,12 @@
 
 #include "index.hpp"
 
-#define PROP_DETAIL_CURRENT_COUNTER_33fe95a2( class ) \
-::prop::detail::CurrentCounter< class, __COUNTER__ >::value
+#define PROP_DETAIL_CURRENT_COUNTER_33fe95a2( class_ ) \
+::prop::detail::CurrentCounter< class_, __COUNTER__ >::value
 
-#define PROP_DETAIL_COUNTER_INC_33fe95a2( class ) \
+#define PROP_DETAIL_COUNTER_INC_33fe95a2( class_ ) \
 static constexpr void zz_prop_detail_counter_33fe95a2( \
-::prop::detail::Index< PROP_DETAIL_CURRENT_COUNTER_33fe95a2( class ) > ) {}
+::prop::detail::Index< PROP_DETAIL_CURRENT_COUNTER_33fe95a2( class_ ) > ) {}
 
 namespace prop {
 namespace detail {

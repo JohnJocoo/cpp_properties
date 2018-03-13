@@ -1,6 +1,20 @@
 #pragma once
 
 #include <string>
+#include <atomic>
+
+#if defined _MSC_VER
+# if _MSC_VER >= 1910 
+#   define MOVE_CAST_SUPPORTED 1
+#   define CAN_MOVE_CASTABLE 1
+# else
+#   define MOVE_CAST_SUPPORTED 0
+#   define CAN_MOVE_CASTABLE 0
+# endif
+#else
+#   define MOVE_CAST_SUPPORTED 1
+# define CAN_MOVE_CASTABLE 1
+#endif
 
 namespace
 {

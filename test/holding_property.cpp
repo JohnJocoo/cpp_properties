@@ -4,6 +4,7 @@
 
 #include <string>
 #include <atomic>
+#include <utility>
 
 #include "common.hpp"
 
@@ -545,6 +546,8 @@ TEST(HoldingProperty, MoveFrom)
   EXPECT_NE( remembered_value, move_to4.getId() );
   EXPECT_NE( 0, obj.ro_value().getId() );
   
+#if MOVE_CAST_SUPPORTED
+
   remembered_value = obj.value1().getId();
   Movable move_to2 = std::move( obj.value1 );
   EXPECT_EQ( remembered_value, move_to2.getId() );
@@ -554,19 +557,40 @@ TEST(HoldingProperty, MoveFrom)
   Movable move_to3 = std::move( obj.ro_value );
   EXPECT_EQ( remembered_value, move_to3.getId() );
   EXPECT_EQ( 0, obj.ro_value().getId() );
-  
-  remembered_value = obj.value3().id;
+
+#else
+
+  remembered_value = obj.value1().getId();
+  Movable move_to2 = std::move( obj.value1 );
+  EXPECT_NE( remembered_value, move_to2.getId() );
+  EXPECT_NE( 0, obj.value1().getId() );
+
+  remembered_value = obj.ro_value().getId();
+  Movable move_to3 = std::move( obj.ro_value );
+  EXPECT_NE( remembered_value, move_to3.getId() );
+  EXPECT_NE( 0, obj.ro_value().getId() );
+
+#endif
+}
+
+#if CAN_MOVE_CASTABLE
+
+TEST( HoldingProperty, MoveFromCastable )
+{
+  auto remembered_value = obj.value3().id;
   Movable move_to5;
   move_to5 = std::move( obj.value3 );
   EXPECT_EQ( remembered_value, move_to5.getId() );
   EXPECT_EQ( 0, obj.value3().id );
-  
+
   remembered_value = obj.ro_value2().id;
   Movable move_to6;
   move_to6 = std::move( obj.ro_value2 );
   EXPECT_EQ( remembered_value, move_to6.getId() );
   EXPECT_EQ( 0, obj.ro_value2().id );
 }
+
+#endif
 
 TEST(HoldingProperty, MoveOwner)
 {

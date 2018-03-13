@@ -9,7 +9,7 @@ namespace prop {
 namespace detail {
 
 template < typename Owner, typename Property >
-constexpr Owner* repairOwnerPointer( Property* property )
+PROP_DETAIL_EXTENDED_CONSTEXPR_33fe95a2 Owner* repairOwnerPointer( Property* property )
 {
   static_assert( std::is_const< Owner >::value == std::is_const< Property >::value,
     "Both Owner and property must have equal const modifiers.");

@@ -62,9 +62,9 @@ Suppose you have a network resource class (like URL) that initialize host name i
     
 And usage in code might look like this:
 
-    PropertyResource prp_res{ "google.com" };
-    prp_res.port = 8080;
-    prp_res.path = "/api/v1.0/status";
-    prp_res.user = User{ "john", "pwd" };
-    printLine( prp_res.URL );  // void printLine(const std::string&);
-    std::cout << prp_res.host() << std::endl;
+    Resource res{ "google.com" };
+    res.port = 8080;
+    res.path = "/api/v1.0/status";
+    res.user = User{ "john", "pwd" };
+    printLine( res.URL );  // void printLine(const std::string&);
+    std::cout << res.host() << std::endl;

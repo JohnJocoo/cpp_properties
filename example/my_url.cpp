@@ -128,7 +128,7 @@ int main()
   prp_res.port = 8080;
   prp_res.path = "/api/v1.0/status";
   prp_res.user = User{ "john", "pwd" };
-  printLine( prp_res.URL );
+  printLine( prp_res.URL ); // void printLine(const std::string&);
   std::cout << prp_res.host() << std::endl;
 
   return 0;

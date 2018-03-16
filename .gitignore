@@ -14,3 +14,5 @@ CMakeScripts
 *.xcodeproj*
 Makefile
 Project.build
+example/example_my_url
+test/cpp_properties_test

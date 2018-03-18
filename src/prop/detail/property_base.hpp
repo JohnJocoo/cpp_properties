@@ -3,6 +3,9 @@
 namespace prop {
 namespace detail {
 
+template < typename Property >
+struct PropertyBaseVisitor;
+
 template < typename ActualProperty >
 class PropertyBase
 {
@@ -18,6 +21,9 @@ protected:
   {
     return *static_cast< Property* >( this );
   }
+  
+private:
+  friend struct PropertyBaseVisitor< Property >;
   
 }; // class PropertyBase
 

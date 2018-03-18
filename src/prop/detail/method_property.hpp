@@ -9,6 +9,7 @@
 #include "property_member_pointer_discoverer.hpp"
 #include "unwrap_if_property.hpp"
 #include "setter_argument_mutator.hpp"
+#include "property_operators_common.hpp"
 
 #define PROP_DETAIL_METHOD_PROPERTY_GET_33fe95a2( value_type, name, getter, tag ) \
 ::prop::MethodProperty< zz_prop_owner_class_33fe95a2, value_type, \

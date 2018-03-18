@@ -123,13 +123,20 @@ int main()
   ori_res.setUser( { "john", "pwd" } );
   printLine( ori_res.getURL() );
   std::cout << ori_res.getHost() << std::endl;
+  int port1 = ori_res.getPort();
+  auto path1 = "Path:" + ori_res.getPath(); // std::string
+  std::cout << port1 << " " << path1 << std::endl;
+  std::cout << std::endl;
 
   PropertyResource prp_res{ "google.com" };
   prp_res.port = 8080;
   prp_res.path = "/api/v1.0/status";
   prp_res.user = User{ "john", "pwd" };
   printLine( prp_res.URL ); // void printLine(const std::string&);
-  std::cout << prp_res.host() << std::endl;
+  std::cout << prp_res.host << std::endl;
+  int port2 = prp_res.port;
+  auto path2 = "Path:" + prp_res.path; // std::string
+  std::cout << port2 << " " << path2 << std::endl;
 
   return 0;
 }

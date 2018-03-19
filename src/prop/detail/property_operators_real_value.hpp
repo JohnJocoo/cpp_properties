@@ -63,5 +63,16 @@ PROP_DETAIL_DEFINE_BINARY_MUTABLE_REAL_VALUE_33fe95a2( ^= )
 PROP_DETAIL_DEFINE_BINARY_MUTABLE_REAL_VALUE_33fe95a2( <<= )
 PROP_DETAIL_DEFINE_BINARY_MUTABLE_REAL_VALUE_33fe95a2( >>= )
 
+// overload >> stream input operator
+
+template < typename ActualProperty, typename ValueType >
+::std::istream& operator >>( ::std::istream& is,
+  PropertyRealValueBase< ActualProperty, ValueType >& property )
+{
+  ActualProperty& actual = PropertyBaseVisitor< ActualProperty >::downcast( property );
+  auto& value = PropertyRealValueVisitor< ActualProperty >::read( actual );
+  return is >> value;
+}
+
 } // namespace detail
 } // namespace prop

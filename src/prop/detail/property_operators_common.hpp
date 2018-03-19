@@ -55,7 +55,7 @@ PROP_DETAIL_DEFINE_BINARY_IMMUTABLE_33fe95a2( >= )
 // overload << shift and stream output operator
 
 template < typename Property, typename T >
-auto operator<<( const PropertyBase< Property >& property, const T& value )
+auto operator <<( const PropertyBase< Property >& property, const T& value )
 {
   return PropertyBaseVisitor< Property >::downcast( property )() <<
     UnwrapIfProperty< T >::forward( value );
@@ -63,15 +63,15 @@ auto operator<<( const PropertyBase< Property >& property, const T& value )
  
 template < typename T, typename Property,
   typename std::enable_if< !IsProperty< CleanType< T > >::value
-      && !::std::is_same< CleanType< T >, ::std::ostream >::value,
+      && !::std::is_base_of< ::std::ostream, CleanType< T > >::value,
     int >::type = 0 >
-auto operator<<( const T& value, const PropertyBase< Property >& property )
+auto operator <<( const T& value, const PropertyBase< Property >& property )
 {
   return value << PropertyBaseVisitor< Property >::downcast( property )();
 }
 
 template < typename Property >
-::std::ostream& operator<<( ::std::ostream& os, const PropertyBase< Property >& property )
+::std::ostream& operator <<( ::std::ostream& os, const PropertyBase< Property >& property )
 {
   return os << PropertyBaseVisitor< Property >::downcast( property )();
 }
@@ -81,19 +81,19 @@ template < typename Property >
 // property-specific file
 
 template < typename Property, typename T >
-auto operator>>( const PropertyBase< Property >& property, const T& value )
+auto operator >>( const PropertyBase< Property >& property, const T& value )
 {
-  return PropertyBaseVisitor< Property >::downcast( property )() <<
+  return PropertyBaseVisitor< Property >::downcast( property )() >>
     UnwrapIfProperty< T >::forward( value );
 }
  
 template < typename T, typename Property,
   typename std::enable_if< !IsProperty< CleanType< T > >::value
-      && !::std::is_same< CleanType< T >, ::std::istream >::value,
+      && !::std::is_base_of< ::std::istream, CleanType< T > >::value,
     int >::type = 0 >
-auto operator>>( const T& value, const PropertyBase< Property >& property )
+auto operator >>( const T& value, const PropertyBase< Property >& property )
 {
-  return value << PropertyBaseVisitor< Property >::downcast( property )();
+  return value >> PropertyBaseVisitor< Property >::downcast( property )();
 }
 
 } // namespace detail

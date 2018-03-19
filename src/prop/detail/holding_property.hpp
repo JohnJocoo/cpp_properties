@@ -7,7 +7,6 @@
 #include "inner_traits.hpp"
 #include "static_class_counter.hpp"
 #include "unwrap_if_property.hpp"
-#include "property_operators_common.hpp"
 
 #define PROP_HOLDING_PROPERTY( value_type, name, accessor_tag ) \
 ::prop::HoldingProperty< zz_prop_owner_class_33fe95a2, value_type, \

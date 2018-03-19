@@ -17,8 +17,7 @@ public:
   }
 
   /*
-   * const volatile & is used to fix "ambiguos" call
-   * on clang and visual studio
+   * const volatile & is used to fix "ambiguos" call on clang
    */
   [[nodiscard, prop::noaddress]] operator const ValueType& () const volatile & noexcept
   {

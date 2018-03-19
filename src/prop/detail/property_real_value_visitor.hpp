@@ -24,6 +24,11 @@ struct PropertyRealValueVisitor< ::prop::HoldingProperty<
     return property.cref();
   }
   
+  [[nodiscard]] static ValueType& read( Property& property ) noexcept
+  {
+    return property.ref();
+  }
+  
   [[nodiscard]] static ValueType&& move( Property& property ) noexcept
   {
     return std::move( property.ref() );

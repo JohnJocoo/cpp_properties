@@ -68,5 +68,5 @@ And usage in code might look like this:
     res.user = User{ "john", "pwd" };
     printLine( res.URL );  // void printLine(const std::string&);
     std::cout << res.host << std::endl;
-    int port = prp_res.port;
-    auto path = "Path:" + prp_res.path; // std::string
+    int port = res.port;
+    auto path = "Path:" + res.path; // std::string

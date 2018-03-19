@@ -47,6 +47,13 @@ public:
       this->downcast() );
   }
   
+  template < typename std::enable_if< !std::is_same< ValueType, bool >::value,
+    int >::type = 0 >
+  [[nodiscard]] explicit operator bool() const &
+  {
+    return static_cast< bool >( (*this)() );
+  }
+  
 }; // class PropertyRealValueBase
 
 } // namespace detail

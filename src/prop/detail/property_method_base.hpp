@@ -28,6 +28,13 @@ public:
     return (owner_cref().*(GetterWrapper::Pointer))();
   }
   
+  template < typename std::enable_if< !std::is_same< ReturnedType, bool >::value,
+    int >::type = 0 >
+  [[nodiscard]] explicit operator bool() const &
+  {
+    return static_cast< bool >( (*this)() );
+  }
+  
 protected:
   Owner& owner_ref()
   {

@@ -64,8 +64,9 @@ And usage in code might look like this:
 
     Resource res{ "google.com" };
     res.port = 8080;
-    res.path = "/api/v1.0/status";
+    res.path = "/api/v1.0";
     res.user = User{ "john", "pwd" };
+    res.path += "/status";
     printLine( res.URL );  // void printLine(const std::string&);
     std::cout << res.host << std::endl;
     int port = res.port;

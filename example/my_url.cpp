@@ -114,13 +114,13 @@ public:
 
 }; // class PropertyResource
 
-
 int main()
 {
   OriginalResource ori_res{ "google.com" };
   ori_res.setPort( 8080 );
-  ori_res.setPath( "/api/v1.0/status" );
+  ori_res.setPath( "/api/v1.0" );
   ori_res.setUser( { "john", "pwd" } );
+  ori_res.setPath( ori_res.getPath() + "/status" );
   printLine( ori_res.getURL() );
   std::cout << ori_res.getHost() << std::endl;
   int port1 = ori_res.getPort();
@@ -130,8 +130,9 @@ int main()
 
   PropertyResource prp_res{ "google.com" };
   prp_res.port = 8080;
-  prp_res.path = "/api/v1.0/status";
+  prp_res.path = "/api/v1.0";
   prp_res.user = User{ "john", "pwd" };
+  prp_res.path += "/status";
   printLine( prp_res.URL ); // void printLine(const std::string&);
   std::cout << prp_res.host << std::endl;
   int port2 = prp_res.port;

@@ -7,10 +7,12 @@
 #include "inner_traits.hpp"
 #include "unwrap_if_property.hpp"
 
+#include <iosfwd>
+
 #define PROP_DETAIL_DEFINE_UNARY_PREFIX_REAL_VALUE_33fe95a2( op ) \
 template < typename ActualProperty, typename ValueType, \
   typename std::enable_if< std::is_same< typename ActualProperty::Accessor, \
-    typename ::prop::ReadWrite >::value, int >::type = 0  > \
+    typename ::prop::ReadWrite >::value, int >::type = 0 > \
 ActualProperty& operator op( PropertyRealValueBase< ActualProperty, ValueType >& property ) \
 { \
   ActualProperty& actual = PropertyBaseVisitor< ActualProperty >::downcast( property ); \
@@ -23,7 +25,7 @@ ActualProperty& operator op( PropertyRealValueBase< ActualProperty, ValueType >&
 template < typename ActualProperty, typename ValueType, \
   typename std::enable_if< std::is_same< typename ActualProperty::Accessor, \
     typename ::prop::ReadWrite >::value, int >::type = 0 > \
-ValueType operator op( PropertyRealValueBase< ActualProperty, ValueType >& property, int ) \
+auto operator op( PropertyRealValueBase< ActualProperty, ValueType >& property, int ) \
 { \
   ActualProperty& actual = PropertyBaseVisitor< ActualProperty >::downcast( property ); \
   auto& value = PropertyRealValueVisitor< ActualProperty >::read( actual ); \

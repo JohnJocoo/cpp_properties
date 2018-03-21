@@ -2,3 +2,4 @@
 
 #include "detail/method_property.hpp"
 #include "detail/property_operators_common.hpp"
+#include "detail/property_operators_method.hpp"

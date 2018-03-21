@@ -38,6 +38,7 @@ set( LIB_SOURCES "${SRC_DIR}/prop/alias_property.hpp"
                  "${SRC_DIR}/prop/detail/property_operators_common.hpp"
                  "${SRC_DIR}/prop/detail/property_base_visitor.hpp"
                  "${SRC_DIR}/prop/detail/property_operators_real_value.hpp"
+                 "${SRC_DIR}/prop/detail/property_operators_method.hpp"
                  )
                 
 add_library( cpp_properties INTERFACE )

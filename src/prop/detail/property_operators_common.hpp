@@ -5,6 +5,8 @@
 #include "inner_traits.hpp"
 #include "unwrap_if_property.hpp"
 
+#include <iosfwd>
+
 #define PROP_DETAIL_DEFINE_UNARY_IMMUTABLE_33fe95a2( op ) \
 template < typename Property > \
 auto operator op( const PropertyBase< Property >& property ) \
